@@ -15,7 +15,7 @@ public class SummarizeRequest {
     private String myText;
     private Integer myMaxLength;
 
-    public String getInputText() {
+    public String getText() {
         return myText;
     }
 
