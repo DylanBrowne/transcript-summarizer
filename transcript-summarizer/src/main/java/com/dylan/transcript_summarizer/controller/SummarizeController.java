@@ -1,11 +1,8 @@
 package com.dylan.transcript_summarizer.controller;
 
-import com.dylan.transcript_summarizer.dto.OllamaRequest;
-import com.dylan.transcript_summarizer.dto.OllamaResponse;
 import com.dylan.transcript_summarizer.dto.SummarizeRequest;
 import com.dylan.transcript_summarizer.service.OllamaService;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.client.RestTemplate;
 
 @RestController
 @RequestMapping("/api")
