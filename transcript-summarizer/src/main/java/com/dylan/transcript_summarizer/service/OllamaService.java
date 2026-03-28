@@ -3,7 +3,9 @@ package com.dylan.transcript_summarizer.service;
 import com.dylan.transcript_summarizer.dto.OllamaRequest;
 import com.dylan.transcript_summarizer.dto.OllamaResponse;
 import com.dylan.transcript_summarizer.dto.SummarizeRequest;
+import org.jspecify.annotations.NonNull;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.ResourceAccessException;
 import org.springframework.web.client.RestTemplate;
 
 @Service
@@ -17,6 +19,27 @@ public class OllamaService {
     }
 
     public String summarize(SummarizeRequest theRequest) {
+        OllamaRequest ollamaRequest = getOllamaRequest(theRequest);
+
+        try {
+            OllamaResponse response = myRestTemplate.postForObject(
+                    "http://localhost:11434/api/generate", //Ollama's URL
+                    ollamaRequest, //OllamaRequest object
+                    OllamaResponse.class //Convert JSON to this class
+            );
+            if (response == null) {
+                throw new IllegalStateException("No response from Ollama.");
+            }
+
+            return response.getResponse();
+
+        //Handle if Ollama is unavailable:
+        } catch (ResourceAccessException e) {
+            throw new ResourceAccessException("Ollama is unavailable. Is it running?");
+        }
+    }
+
+    private static OllamaRequest getOllamaRequest(SummarizeRequest theRequest) {
         OllamaRequest ollamaRequest = new OllamaRequest();
 
         //curl.exe -X POST http://localhost:8080/api/summarize
@@ -37,15 +60,6 @@ public class OllamaService {
         ollamaRequest.setPrompt(prompt);
         ollamaRequest.setModel("llama3.1");
         ollamaRequest.setStream(false);
-
-        OllamaResponse response = myRestTemplate.postForObject(
-                "http://localhost:11434/api/generate", //Ollama's URL
-                ollamaRequest, //OllamaRequest object
-                OllamaResponse.class //Convert JSON to this class
-        );
-        if (response == null) {
-            throw new IllegalStateException("No response from Ollama.");
-        }
-        return response.getResponse();
+        return ollamaRequest;
     }
 }
