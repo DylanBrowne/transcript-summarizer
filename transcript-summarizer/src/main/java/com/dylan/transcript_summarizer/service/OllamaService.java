@@ -22,9 +22,19 @@ public class OllamaService {
         //curl.exe -X POST http://localhost:8080/api/summarize
         // -H "Content-Type: application/json"
         // -d "{\"text\":\"This is text to be sent to Ollama\",\"maxLength\":50}"
-        ollamaRequest.setPrompt("In " + theRequest.getMaxLength()
-                              + " words or less, summarize this: "
-                              + theRequest.getText());
+
+        //Check if the length field is null:
+        final String prompt;
+        if (theRequest.getMaxLength() != null) {
+            prompt = "In " + theRequest.getMaxLength() + " words or less,"
+                    + " summarize the following text:\n\n"
+                    + theRequest.getText();
+        } else {
+            prompt = "Summarize the following text:\n\n"
+                    + theRequest.getText();
+        }
+
+        ollamaRequest.setPrompt(prompt);
         ollamaRequest.setModel("llama3.1");
         ollamaRequest.setStream(false);
 
