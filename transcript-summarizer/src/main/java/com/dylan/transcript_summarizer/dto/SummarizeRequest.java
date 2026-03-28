@@ -19,7 +19,7 @@ public class SummarizeRequest {
         return myText;
     }
 
-    public int getMaxLength() {
+    public Integer getMaxLength() {
         return myMaxLength;
     }
 
