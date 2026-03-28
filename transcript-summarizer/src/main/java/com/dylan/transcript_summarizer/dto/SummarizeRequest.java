@@ -12,22 +12,40 @@ package com.dylan.transcript_summarizer.dto;
  * only the data necessary for communication.
  */
 public class SummarizeRequest {
-    private String myText;
-    private Integer myMaxLength;
+    private String text;
+    private Integer maxLength;
+    private String instruction;
+    private String url;
 
     public String getText() {
-        return myText;
+        return text;
     }
 
     public Integer getMaxLength() {
-        return myMaxLength;
+        return maxLength;
     }
 
-    public String setText(String theText) {
-        return myText = theText;
+    public String getInstruction() {
+        return instruction;
     }
 
-    public Integer setMaxLength(Integer theLength) {
-        return myMaxLength = theLength;
+    public String getUrl() {
+        return url;
+    }
+
+    public void setText(String theText) {
+        text = theText;
+    }
+
+    public void setMaxLength(Integer theLength) {
+        maxLength = theLength;
+    }
+
+    public void setInstruction(final String theInstruction) {
+        instruction = theInstruction;
+    }
+
+    public void setUrl(final String theURL) {
+        url = theURL;
     }
 }
