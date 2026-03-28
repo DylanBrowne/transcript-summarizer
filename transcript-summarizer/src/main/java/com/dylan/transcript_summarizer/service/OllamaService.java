@@ -3,10 +3,12 @@ package com.dylan.transcript_summarizer.service;
 import com.dylan.transcript_summarizer.dto.OllamaRequest;
 import com.dylan.transcript_summarizer.dto.OllamaResponse;
 import com.dylan.transcript_summarizer.dto.SummarizeRequest;
-import org.jspecify.annotations.NonNull;
+import org.jsoup.Jsoup;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.ResourceAccessException;
 import org.springframework.web.client.RestTemplate;
+
+import java.io.IOException;
 
 @Service
 public class OllamaService {
@@ -19,8 +21,28 @@ public class OllamaService {
     }
 
     public String summarize(SummarizeRequest theRequest) {
-        OllamaRequest ollamaRequest = getOllamaRequest(theRequest);
+        if (theRequest.getText() == null && theRequest.getUrl() == null) {
+            throw new IllegalArgumentException("The text or URL fields must have a value.");
+        }
 
+        String combinedText = "";
+
+        //If URL is provided, use the URL for summarization:
+        if (theRequest.getUrl() != null) {
+            try {
+                combinedText += Jsoup.connect(theRequest.getUrl()).get().text();
+            } catch (IOException e) {
+                throw new RuntimeException("Failed to fetch URL: " + theRequest.getUrl(), e);
+            }
+
+        }
+
+        if (theRequest.getText() != null) {
+            combinedText += theRequest.getText();
+        }
+
+        OllamaRequest ollamaRequest = getOllamaRequest(theRequest, combinedText);
+        
         try {
             OllamaResponse response = myRestTemplate.postForObject(
                     "http://localhost:11434/api/generate", //Ollama's URL
@@ -33,13 +55,15 @@ public class OllamaService {
 
             return response.getResponse();
 
-        //Handle if Ollama is unavailable:
+            //Handle if Ollama is unavailable:
         } catch (ResourceAccessException e) {
-            throw new ResourceAccessException("Ollama is unavailable. Is it running?");
+            throw new RuntimeException("Ollama is unavailable. Is it running?", e);
         }
     }
 
-    private static OllamaRequest getOllamaRequest(SummarizeRequest theRequest) {
+    private static OllamaRequest getOllamaRequest(SummarizeRequest theRequest, String theCombinedText) {
+
+        
         OllamaRequest ollamaRequest = new OllamaRequest();
 
         //curl.exe -X POST http://localhost:8080/api/summarize
@@ -51,10 +75,10 @@ public class OllamaService {
         if (theRequest.getMaxLength() != null) {
             prompt = "In " + theRequest.getMaxLength() + " words or less,"
                     + " summarize the following text:\n\n"
-                    + theRequest.getText();
+                    + theCombinedText;
         } else {
             prompt = "Summarize the following text:\n\n"
-                    + theRequest.getText();
+                    + theCombinedText;
         }
 
         ollamaRequest.setPrompt(prompt);
