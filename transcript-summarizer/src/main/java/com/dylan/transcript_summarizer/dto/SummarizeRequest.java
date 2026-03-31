@@ -13,7 +13,7 @@ package com.dylan.transcript_summarizer.dto;
  */
 public class SummarizeRequest {
     private String text;
-    private Integer maxLength;
+    private Integer maxWords;
     private String instruction;
     private String url;
 
@@ -21,8 +21,8 @@ public class SummarizeRequest {
         return text;
     }
 
-    public Integer getMaxLength() {
-        return maxLength;
+    public Integer getMaxWords() {
+        return maxWords;
     }
 
     public String getInstruction() {
@@ -37,8 +37,8 @@ public class SummarizeRequest {
         text = theText;
     }
 
-    public void setMaxLength(Integer theLength) {
-        maxLength = theLength;
+    public void setMaxWords(Integer theLength) {
+        maxWords = theLength;
     }
 
     public void setInstruction(final String theInstruction) {
