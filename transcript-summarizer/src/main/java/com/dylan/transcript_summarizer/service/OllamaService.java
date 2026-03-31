@@ -41,7 +41,7 @@ public class OllamaService {
             combinedText += theRequest.getText();
         }
 
-        OllamaRequest ollamaRequest = getOllamaRequest(theRequest, combinedText);
+        OllamaRequest ollamaRequest = getOllamaRequest(combinedText, theRequest.getMaxWords());
         
         try {
             OllamaResponse response = myRestTemplate.postForObject(
@@ -61,7 +61,7 @@ public class OllamaService {
         }
     }
 
-    private static OllamaRequest getOllamaRequest(SummarizeRequest theRequest, String theCombinedText) {
+    private static OllamaRequest getOllamaRequest(String theCombinedText, Integer theSummaryLength) {
 
         
         OllamaRequest ollamaRequest = new OllamaRequest();
@@ -72,9 +72,10 @@ public class OllamaService {
 
         //Check if the length field is null:
         final String prompt;
-        if (theRequest.getMaxLength() != null) {
-            prompt = "In " + theRequest.getMaxLength() + " words or less,"
-                    + " summarize the following text:\n\n"
+        if (theSummaryLength != null) {
+            prompt = "You MUST respond in exactly " + theSummaryLength + " words or less."
+                    + "Do not exceed this limit under any circumstances. Summarize the "
+                    + "following text:\n\n"
                     + theCombinedText;
         } else {
             prompt = "Summarize the following text:\n\n"

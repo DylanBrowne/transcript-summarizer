@@ -17,6 +17,10 @@ public class SummarizeController {
 
     @PostMapping("/summarize")
     public String summarize(@RequestBody SummarizeRequest request) {
-        return myOllamaService.summarize(request);
+        String response = myOllamaService.summarize(request);
+        if (response.length() > request.getMaxWords()) {
+            response = response.substring(0, request.getMaxWords() - 1);
+        }
+        return response;
     }
 }
