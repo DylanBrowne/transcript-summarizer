@@ -10,19 +10,32 @@ import org.springframework.web.client.RestTemplate;
 
 import java.io.IOException;
 
+/*
+* This service class is responsible for interacting with the Ollama API to 
+* summarize text or content from a URL.
+*/
 @Service
 public class OllamaService {
-
+    
     private final RestTemplate myRestTemplate;
 
+    /*
+     * Constructor for the OllamaService class. It takes a RestTemplate object 
+     * as a parameter, which is used to make HTTP requests to the Ollama API.
+     */
     public OllamaService(final RestTemplate theRestTemplate) {
         super();
         myRestTemplate = theRestTemplate;
     }
 
+    /*
+    * This method takes a SummarizeRequest object, which may contain either
+    * text or a URL, and returns a summarized version of the content.
+    */
     public String summarize(SummarizeRequest theRequest) {
         if (theRequest.getText() == null && theRequest.getUrl() == null) {
-            throw new IllegalArgumentException("The text or URL fields must have a value.");
+            throw new IllegalArgumentException("The text or URL fields must 
+                                                have a value.");
         }
 
         String combinedText = "";
@@ -61,6 +74,10 @@ public class OllamaService {
         }
     }
 
+    /*
+    * This method constructs an OllamaRequest object based on the provided 
+    * text and optional summary length.
+    */
     private static OllamaRequest getOllamaRequest(String theCombinedText, Integer theSummaryLength) {
 
         
@@ -86,5 +103,9 @@ public class OllamaService {
         ollamaRequest.setModel("llama3.1");
         ollamaRequest.setStream(false);
         return ollamaRequest;
+    }
+
+    public int getSummaryLength() {
+        
     }
 }
