@@ -34,8 +34,7 @@ public class OllamaService {
     */
     public String summarize(SummarizeRequest theRequest) {
         if (theRequest.getText() == null && theRequest.getUrl() == null) {
-            throw new IllegalArgumentException("The text or URL fields must " 
-                                                + "have a value.");
+            throw new IllegalArgumentException("The text or URL fields must have a value.");
         }
 
         String combinedText = "";
@@ -56,6 +55,7 @@ public class OllamaService {
 
         OllamaRequest ollamaRequest = getOllamaRequest(combinedText, theRequest.getMaxWords());
         
+        // Send the request to Ollama and handle the response:
         try {
             OllamaResponse response = myRestTemplate.postForObject(
                     "http://localhost:11434/api/generate", //Ollama's URL
